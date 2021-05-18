@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, TextAreaField, DateTimeField, PasswordField
+from wtforms import TextField
 from flask_wtf.file import FileField, FileRequired
 from wtforms.validators import Required
-from werkzeug.utils import secure_filename
 
 
 class NewPassForm(FlaskForm):

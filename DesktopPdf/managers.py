@@ -4,7 +4,7 @@ from PIL import Image
 from datetime import datetime
 import yaml
 
-from PhotoToDesktop.configuration import get_local_ip
+from DesktopPdf.configuration import get_local_ip
 
 
 class PassManager:

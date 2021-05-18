@@ -4,9 +4,9 @@ import os
 import multiprocessing
 import requests
 
-from PhotoToDesktop.forms import NewPassForm, LogInForm, PhotoForm
-from PhotoToDesktop.configuration import get_local_ip, get_server_port
-from PhotoToDesktop import app
+from DesktopPdf.forms import NewPassForm, LogInForm, PhotoForm
+from DesktopPdf.configuration import get_local_ip, get_server_port
+from DesktopPdf import app
 
 
 def login_required(f):

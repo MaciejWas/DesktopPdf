@@ -3,20 +3,17 @@ import os
 
 
 class Config(object):
-    """
-    Configuration base, for all environments.
-    """
-
+    """Configuration base, for all environments."""
     DEBUG = False
     TESTING = False
     BOOTSTRAP_FONTAWESOME = True
-    SECRET_KEY = "MINHACHAVESECRETA"
+    SECRET_KEY = "DesktopPdf"
     CSRF_ENABLED = True
 
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 1))  # connect() for UDP doesn't send packets
+    s.connect(("8.8.8.8", 1))
     local_ip_address = s.getsockname()[0]
     return local_ip_address
 
