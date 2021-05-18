@@ -42,15 +42,17 @@ class PassManager:
 class FileManager:
     def __init__(self):
         self._download_dir = os.path.join("app", "PTDdownloads")
-        self._default_name = "PDF_%H:%M:%S_%d/%m/%Y"
-        self.history_path = os.path.join("../.history", "history.yml")
+        self._default_name = "PDF_%H:%M:%S_%d-%m-%Y.pdf"
+        self.history_path = os.path.join("..", ".history", "history.yml")
+
+        print(f"History path: {self.history_path}")
 
         if ".history" not in os.listdir():
             os.mkdir("../.history")
             with open(self.history_path, "w") as f:
                 yaml.dump(
                     {
-                        "memory_since": datetime.now().strftime("%H:%M:%S_%d/%m/%Y"),
+                        "memory_since": datetime.now().strftime("%H:%M:%S_%d-%m-%Y"),
                         "received_files": [],
                     },
                     f,
@@ -62,23 +64,12 @@ class FileManager:
     def get_download_dir(self) -> str:
         return self._download_dir
 
-    @staticmethod
-    def str_into_bytes(bytes_as_str: str) -> bytes:
-        bytes_data = bytes_as_str.encode("ascii")
-        return bytes_data
-
-    def build_photo_from_bytes(self, image_bytes: bytes) -> Image:
-        bytes_io = io.BytesIO(image_bytes)
-        image = Image.open(bytes_io)
-        return image
-
     def new_pdf(self, file: "werkzeug.datastructures.FileStorage") -> bool:
         try:
-            received_bytes = self.str_into_bytes(received_str)
-            image = self.build_photo_from_bytes(received_bytes)
-            current_time = datetime.now()
-            filename = current_time.strftime(self._default_name) + ".pdf"
-            image.save(fp=os.path.join(self._download_dir, filename), format="PDF")
+            pil_image = Image.open(file)
+            pil_image.save(
+                os.path.join(".history", datetime.now().strftime(self._default_name))
+            )
             return True
 
         except Exception as e:

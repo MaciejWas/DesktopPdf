@@ -4,6 +4,7 @@ import os
 
 class Config(object):
     """Configuration base, for all environments."""
+
     DEBUG = False
     TESTING = False
     BOOTSTRAP_FONTAWESOME = True

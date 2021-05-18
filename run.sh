@@ -1,3 +1,3 @@
-export FLASK_APP=PhotoToDesktop
+export FLASK_APP=DesktopPdf
 python setup.py develop
-flask run --host=0.0.0.0
+python run.py
