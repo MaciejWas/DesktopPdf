@@ -1,6 +1,7 @@
 import os
 import requests
 import multiprocessing
+import platform
 
 from DesktopPdf import app
 from DesktopPdf.configuration import get_server_port
@@ -9,7 +10,13 @@ from DesktopPdf.configuration import get_server_port
 def run_chrome():
     port = get_server_port()
     link = "http://" + app.pass_manager.local_ip + ":" + str(port)
-    os.system("google-chrome --app=" + link)
+    if platform.system() == "Linux":
+        os.system("google-chrome --app=" + link)
+    elif platform == "Windows":
+        os.system("start chrome --app=" + link)
+    else:
+        raise Exception("Chrome GUI is not implemented for your OS.")
+
     requests.get(link + "/shutdown")
 
 

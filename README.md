@@ -2,6 +2,9 @@
 
 Application for uploading photos from a mobile device and converting it to a pdf file.
 
+## Requirements
+Aside from python packages listed in `requirements.txt` the app also requires **Google Chrome**.
+
 ## How to run
 
 ```angular2html
