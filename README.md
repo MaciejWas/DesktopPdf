@@ -6,6 +6,7 @@ Application for uploading photos from a mobile device and converting it to a pdf
 
 ```angular2html
     $ pip install -r requirements.txt
+    $ python setup.py install
     $ python run.py
 ```
 
