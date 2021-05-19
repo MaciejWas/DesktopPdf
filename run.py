@@ -12,12 +12,13 @@ def run_chrome():
     link = "http://" + app.pass_manager.local_ip + ":" + str(port)
     if platform.system() == "Linux":
         os.system("google-chrome --app=" + link)
-    elif platform == "Windows":
+        requests.get(link + "/shutdown")
+
+    elif platform.system() == "Windows":
         os.system("start chrome --app=" + link)
     else:
         raise Exception("Chrome GUI is not implemented for your OS.")
 
-    requests.get(link + "/shutdown")
 
 
 def run_app():
