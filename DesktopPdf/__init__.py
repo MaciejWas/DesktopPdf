@@ -1,5 +1,3 @@
-print("__init__")
-
 from flask import Flask
 from DesktopPdf.managers import PassManager, FileManager
 from flask_bootstrap import Bootstrap
