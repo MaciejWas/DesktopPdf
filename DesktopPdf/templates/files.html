@@ -3,5 +3,9 @@
 {%block title%}Main Page{%endblock%}
 
 {%block main_content%}
-    Tutaj będą pobrane pliki
+    {%for file in files%}
+    <h4>{{ file['name'] }}</h4>
+    <iframe src="data:application/pdf;base64,{{ file['b64'] }}"></iframe>
+    {%endfor%}
+
 {%endblock%}

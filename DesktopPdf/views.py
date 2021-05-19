@@ -1,8 +1,7 @@
 from flask import request, render_template, redirect
 from functools import wraps
 import os
-import multiprocessing
-import requests
+import base64
 
 from DesktopPdf.forms import NewPassForm, LogInForm, PhotoForm
 from DesktopPdf.configuration import get_local_ip, get_server_port
@@ -70,6 +69,7 @@ def password():
     form = NewPassForm()
     if request.method == "POST":
         app.pass_manager.set_password(form.password._value())
+        return redirect("/index")
     return render_template("pass.html", title="Change Password", form=form)
 
 
@@ -86,8 +86,16 @@ def upload_image():
 @app.route("/files/", methods=["GET"])
 @login_required
 def files():
-    return render_template("files.html")
+    download_folder = app.file_manager.save_folder
+    downloaded_files = os.listdir(download_folder)
+    files = []
+    for file in downloaded_files:
+        with open(os.path.join(download_folder, file), "rb") as f:
+            files.append(
+                {"name": file, "b64": base64.b64encode(f.read()).decode("ascii")}
+            )
 
+    return render_template("files.html", files=files)
 
 @app.route("/shutdown/", methods=["GET"])
 @login_required
