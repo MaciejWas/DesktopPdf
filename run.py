@@ -6,8 +6,7 @@ import platform
 from DesktopPdf import app
 from DesktopPdf.configuration import get_server_port
 
-
-def run_chrome():
+def run_chrome() -> None:
     port = get_server_port()
     link = "http://" + app.pass_manager.local_ip + ":" + str(port)
     if platform.system() == "Linux":
@@ -16,12 +15,12 @@ def run_chrome():
 
     elif platform.system() == "Windows":
         os.system("start chrome --app=" + link)
+
     else:
         raise Exception("Chrome GUI is not implemented for your OS.")
 
 
-
-def run_app():
+def run_app() -> None:
     port = get_server_port()
     app.run(host="0.0.0.0", port=port)
 

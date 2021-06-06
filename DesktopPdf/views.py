@@ -67,9 +67,11 @@ def login_site():
 @login_required
 def password():
     form = NewPassForm()
+
     if request.method == "POST":
         app.pass_manager.set_password(form.password._value())
         return redirect("/index")
+
     return render_template("pass.html", title="Change Password", form=form)
 
 
