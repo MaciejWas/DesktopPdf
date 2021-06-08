@@ -6,11 +6,14 @@ import random
 from DesktopPdf.configuration import get_local_ip
 
 def get_random_digits(n=6):
+    if n <= 0:
+        return ""
+
     password_number = random.randint(0, int("9" * n))
     password = str(password_number)
     password = "0" * (n-len(password)) + password
     return password
-    
+
 
 class PassManager:
     def __init__(self):

@@ -3,6 +3,18 @@
 {%block title%}Main Page{%endblock%}
 
 {%block main_content%}
-    <p>Local address: {{ ip }} : {{ port }}</p>
-    <p>Password: {{ password }}</p>
+    <html>
+    <head>
+    <style>
+    h1 {text-align: center;}
+    p {text-align: center;}
+    div {text-align: center;}
+    </style>
+    </head>
+    </html>
+    <body style="background-color:#D0EDF7;">
+    <h1>Local address: </h1>
+    <p> {{ ip }}:{{ port }}</p>
+    <h1>Password: </h1>
+    <p> {{ password }}</p1>
 {%endblock%}

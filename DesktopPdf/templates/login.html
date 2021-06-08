@@ -4,7 +4,7 @@
 {%block title%}Pass!{%endblock%}
 
 {%block main_content%}
-
+<body style="background-color:#D0EDF7;">
 	<h1>Login</h1>
     <form action="" method="post" class="form form-horizontal" name="passform">
         {{ wtf.form_errors(form,"only") }}
@@ -16,4 +16,5 @@
         <p>{{ wrong_password_message }}</p>
     </form>
 
+	
 {%endblock%}

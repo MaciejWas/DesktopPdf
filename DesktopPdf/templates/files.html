@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
-{%block title%}Main Page{%endblock%}
+{%block title%}Files{%endblock%}
 
 {%block main_content%}
+    <body style="background-color:#D0EDF7;">
     {%for file in files%}
     <h4>{{ file['name'] }}</h4>
-    <iframe src="data:application/pdf;base64,{{ file['b64'] }}" width="400" height="750"></iframe>
+    <iframe src="data:application/pdf;base64,{{ file['b64'] }}" width="400" height="500"></iframe>
     {%endfor%}
-
+	
 {%endblock%}
