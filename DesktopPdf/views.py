@@ -36,6 +36,10 @@ def index():
         port=get_server_port(),
     )
 
+@app.route("/options")
+@login_required
+def options():
+    return render_template("options.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login_site():
@@ -63,7 +67,7 @@ def login_site():
     )
 
 
-@app.route("/pass/", methods=["GET", "POST"])
+@app.route("/pass", methods=["GET", "POST"])
 @login_required
 def password():
     form = NewPassForm()
@@ -75,31 +79,32 @@ def password():
     return render_template("pass.html", title="Change Password", form=form)
 
 
-@app.route("/upload-image", methods=["GET", "POST"])
+@app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload_image():
     form = PhotoForm()
     if request.method == "POST":
         photo_data = form.photo.data
-        app.file_manager.new_pdf(photo_data)
-    return render_template("/upload_image.html", form=form)
+        print("LOL seems like it\'s cool")
+    #     app.file_manager.new_pdf(photo_data)
+    return render_template("/upload.html", photo_form=form)
 
 
-@app.route("/files/", methods=["GET"])
+@app.route("/downloads/", methods=["GET"])
 @login_required
 def files():
-    download_folder = app.file_manager.save_folder
-    downloaded_files = os.listdir(download_folder)
-    files = []
-    for file in downloaded_files:
-        with open(os.path.join(download_folder, file), "rb") as f:
-            files.append(
-                {"name": file, "b64": base64.b64encode(f.read()).decode("ascii")}
-            )
+    # download_folder = app.file_manager.save_folder
+    # downloaded_files = os.listdir(download_folder)
+    # files = []
+    # for file in downloaded_files:
+    #     with open(os.path.join(download_folder, file), "rb") as f:
+    #         files.append(
+    #             {"name": file, "b64": base64.b64encode(f.read()).decode("ascii")}
+    #         )
 
-    return render_template("files.html", files=files)
+    return render_template("downloads.html") #, files=files)
 
-@app.route("/shutdown/", methods=["GET"])
+@app.route("/shutdown", methods=["GET"])
 @login_required
 def shutdown():
     shutdown_function = request.environ.get("werkzeug.server.shutdown")

@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from PIL import ImageEnhance
 from datetime import datetime
 import random
 
@@ -48,11 +49,35 @@ class FileManager:
         if self.save_folder not in os.listdir():
             os.mkdir(self.save_folder)
 
-    def new_pdf(self, file: "werkzeug.datastructures.FileStorage") -> bool:
+    @staticmethod
+    def rotate_image(self, img: Image.Image) -> Image.Image:
+        return pil_image.rotate(90)
+
+    @staticmethod
+    def sharpen_image(self, img: Image.Image) -> Image.Image:
+        enhanced = ImageEnhance.Sharpness(img).factor(1.)
+        return enhanced
+
+    @staticmethod
+    def to_black_and_white(self, img: Image.Image) -> Image.Image:
+        return img.convert("1")
+
+    def new_pdf(self,
+        file: "werkzeug.datastructures.FileStorage",
+        to_black_and_white = True,
+        sharpen = True
+        ) -> bool:
+
         pil_image = Image.open(file)
 
         if pil_image.size[0] > pil_image.size[1]:
-            pil_image = pil_image.rotate(90)
+            pil_image = self.rotate_image(pil_image)
+
+        if to_black_and_white:
+            pil_image = self.to_black_and_white(pil_image)
+
+        if sharpen:
+            pil_image = self.sharpen(pil_image)
 
         filename = datetime.now().strftime(self._default_name)
         pil_image.save(
@@ -60,3 +85,8 @@ class FileManager:
         )
 
         return True
+
+    def load_rotate_save(self, location: str):
+        pil_image = Image.open(location)
+        rotated = self.rotate_image(location)
+        return rotated
