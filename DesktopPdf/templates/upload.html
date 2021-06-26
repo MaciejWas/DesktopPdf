@@ -1,34 +1,84 @@
 {% extends "base.html" %}
 
-{% block title %}Main Page{% endblock %}
+{% block title %}Upload{% endblock %}
 {% block main %}
 
+<div class="text-center">
 
-  <main>
+  {% if uploaded %}
+    <div class="alert alert-success" role="alert">
+      Successfully merged pdfs!
+    </div>
+  {% else %}
+  {% endif %}
 
-          <p class="lead"> Create new pdf: </p>
+  <p class="lead">
+    Create new pdf:
+  </p>
 
-            <form action="/upload" method="POST" enctype="multipart/form-data">
+  <div class="container">
+    <div class="card text-white bg-secondary mb-3">
+      <div class="card-header">
+        Add page
+      </div>
 
-              <!-- <div claass="form-group">
-                  <label>Select photo</label>
-                  <div>
-                      <input type="file" class="custom-file-input" name="image" id="image">
-                  </div>
-              </div>
+      <div class="card-body">
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+          {{ photo_form.photo }}
+          <p style="margin-bottom:0.5cm;"></p>
 
-              <button type="submit" class="btn btn-primary">Upload</button> -->
+          <div class="form-actions">
+              <button name="action_save" type="submit" class="btn btn-primary">
+                Upload
+              </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-              {{ photo_form.photo }}
-              <p style="margin-bottom:0.5cm;"></p>
-              <div class="form-actions">
-                  <button name="action_save" type="submit" class="btn btn-primary">Upload</button>
-              </div>
+  <p style="margin-bottom:0.5cm;"></p>
 
-          </form>
+  <div class="card text-center text-white bg-secondary mb-3">
+    <div class="card-header">
+      Merge pdfs
+    </div>
+    <div class="card-body">
+      {% for temp_file_name in temporary_files %}
+
+        <div class="alert alert-info" role="alert">
+          Pdf {{ temp_file_name }} ready!
+        </div>
+
+      {% endfor %}
+
+      {% if no_temp%}
+        <div class="alert alert-warning" role="alert">
+          No files uploaded
+        </div>
+      {% else %}
+      {% endif %}
+
+    </div>
+    <div class="card-footer text-muted">
+      <form name="merge" action="/upload" method="POST" enctype="multipart/form-data">
+        <div class="mb-4 text-white">
+          <label for="description">Description</label>
+          <input class="form-control" type="text" name="description" id="descriptionbox" placeholder="No description">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary text-white" value="1" name="merge">
+            Merge
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
 
-  </main>
+</div>
+
 
 
 {% endblock %}

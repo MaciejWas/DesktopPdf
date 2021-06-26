@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Main Page{% endblock %}
+
+{% block main %}
+
+<!-- TODO: Utulić Olę do snu: DONE! -->
+
+  <main>
+    <div class="text-center md-auto">
+
+          <p class="lead text-center mb-3">Browse through uploaded pdfs below or upload a new one!</p>
+              <p style="margin-bottom:1cm;"></p>
+
+              <div class="card border-white mb-3 bg-transparent mx-auto" style="max-width: 18rem;">
+                <div class="card-header bg-transparent border-white"><h4>Connect to:</h4></div>
+                <div class="card-body text-white text-center">
+                  <div>
+                      <img src="{{ url_for('static', filename='img.png') }}">
+                      <h4> {{ ip }}:{{ port }}</h4>
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent border-white">Password: {{ password }}</div>
+              </div>
+
+
+      </div>
+
+{% for file in files %}
+  <!-- <div class="album py-5 bg-dark">
+    <div class="container"> -->
+
+      <div class="card text-black bg-secondary mb-3">
+        <div class="card-body">
+          <h5 class="card-title ">{{ file['title'] }}</h5>
+          <p class="card-text"> {{ file['description'] }}</p>
+          <p class="card-text"><small class="text-white">Uploaded at {{ file['date_created'] }}</small></p>
+
+        </div>
+        <iframe src="data:application/pdf;base64,{{ file['b64_file'] }}" height="300"></iframe>
+      </div>
+
+    <!-- </div>
+  </div> -->
+{% endfor %}
+
+
+
+  </main>
+
+
+{% endblock %}

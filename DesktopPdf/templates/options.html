@@ -1,137 +1,113 @@
 {% extends "base.html" %}
 
-{% block title %}Downloads{% endblock %}
+{% block title %}Options{% endblock %}
+
 {% block main %}
 
-    <div class="container">
+<div class="row justify-content-center">
+  <form action="/options" method="POST" enctype="multipart/form-data">
+
+    <p class="lead">
+      Connecting
+    </p>
+
+    <div class="mb-4">
+      <label for="password">Password</label>
+      <input class="form-control" type="text" name="password" id="passwordbox" placeholder="PAs$$VVoRd" value="{{ current_password }}">
+      <p> Type "&ltrandom&gt" for a random password </p>
+    </div>
+
+
+    <hr class="mb-4">
+    <p class="lead">
+      Saving
+    </p>
+
+    <div class="mb-3">
+      <label for="filename">Filename</label>
+      <input class="form-control" type="text" name="filename" id="filenamebox" placeholder="E.g. Kolokwium_<date>_Maciej_Wasilewski" value="{{ current_default_filename }}">
+      <p> "&ltdate&gt" will be replace with current date as specified in the box "Date format"</p>
+    </div>
+
+    <div class="mb-3">
+      <label for="dateformat">Date format</label>
+      <input class="form-control" type="text" name="dateformat" id="dateformatbox" placeholder="E.g. %H:%M:%S_%d-%m-%Y" value="{{ current_date_format }}">
 
 
       <div class="row">
 
-        <div class="col-md-8 order-md-1">
-          <h4 class="mb-3">Options</h4>
-          <form class="needs-validation" novalidate="">
-            <div class="row">
-
-
-              <div class="mb-3">
-                <input type="text" class="form-control" id="Name" placeholder="Name and Surname">
-              </div>
-
-            <div class="mb-3">
-              <label for="username">Username</label>
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">@</span>
-                </div>
-                <input type="text" class="form-control" id="username" placeholder="Username" required="">
-                <div class="invalid-feedback" style="width: 100%;">
-                  Your username is required.
-                </div>
-              </div>
-            </div>
-
-
-            <div class="mb-3">
-              <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
-            </div>
-
-            <div class="row">
-              <div class="col-md-5 mb-3">
-                <label for="country">Country</label>
-                <select class="custom-select d-block w-100" id="country" required="">
-                  <option value="">Choose...</option>
-                  <option>United States</option>
-                </select>
-                <div class="invalid-feedback">
-                  Please select a valid country.
-                </div>
-              </div>
-              <div class="col-md-4 mb-3">
-                <label for="state">State</label>
-                <select class="custom-select d-block w-100" id="state" required="">
-                  <option value="">Choose...</option>
-                  <option>California</option>
-                </select>
-                <div class="invalid-feedback">
-                  Please provide a valid state.
-                </div>
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="zip">Zip</label>
-                <input type="text" class="form-control" id="zip" placeholder="" required="">
-                <div class="invalid-feedback">
-                  Zip code required.
-                </div>
-              </div>
-            </div>
-            <hr class="mb-4">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="same-address">
-              <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-            </div>
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="save-info">
-              <label class="custom-control-label" for="save-info">Save this information for next time</label>
-            </div>
-            <hr class="mb-4">
-
-            <h4 class="mb-3">Payment</h4>
-
-            <div class="d-block my-3">
-              <div class="custom-control custom-radio">
-                <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked="" required="">
-                <label class="custom-control-label" for="credit">Credit card</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required="">
-                <label class="custom-control-label" for="debit">Debit card</label>
-              </div>
-              <div class="custom-control custom-radio">
-                <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required="">
-                <label class="custom-control-label" for="paypal">Paypal</label>
-              </div>
-            </div>
-
-
-            <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-          </form>
+        <div class="col">
+          <ul>
+            <li>%H - hour</li>
+            <li>%M - minute</li>
+            <li>%S - second</li>
+          </ul>
         </div>
+
+        <div class="col">
+          <ul>
+            <li>%d - day</li>
+            <li>%m - month</li>
+            <li>%Y - year</li>
+          </ul>
+        </div>
+
+
       </div>
-
-
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="../../assets/js/vendor/popper.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <script src="../../assets/js/vendor/holder.min.js"></script>
-    <script>
-      // Example starter JavaScript for disabling form submissions if there are invalid fields
-      (function() {
-        'use strict';
+    <hr class="mb-4">
+    <div class="custom-control custom-checkbox">
+      <input name="rotate" type="checkbox" class="custom-control-input" id="rotate" {{ rotate }}>
+      <label class="custom-control-label" for="rotate">Rotate if image width is greater than height</label>
+    </div>
 
-        window.addEventListener('load', function() {
-          // Fetch all the forms we want to apply custom Bootstrap validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
+    <div class="custom-control custom-checkbox">
+      <input name="sharpen" type="checkbox" class="custom-control-input" id="sharpen" {{ sharpen }}>
+      <label class="custom-control-label" for="sharpen">Sharpen the image</label>
+    </div>
 
-          // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function(form) {
-            form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-              form.classList.add('was-validated');
-            }, false);
-          });
-        }, false);
-      })();
-    </script>
+    <div class="custom-control custom-checkbox">
+      <input name="grayscale" type="checkbox" class="custom-control-input" id="grayscale" {{ grayscale }}>
+      <label class="custom-control-label" for="grayscale">Grayscale</label>
+    </div>
+
+    <hr class="mb-4">
+
+    <div class="custom-control custom-checkbox">
+      <input name="remember" type="checkbox" class="custom-control-input" id="remember" {{ remember }}>
+      <label class="custom-control-label" for="remember">Remember settings</label>
+    </div>
+
+    <hr class="mb-4">
+
+      <!-- BUTTON -->
+
+    <div class="row justify-content-center mb-3">
+      <button type="submit" class="btn btn-primary">
+        Save
+      </button>
+    </div>
+
+  </form>
+
+  <form name="default" action="/options" method="POST" enctype="multipart/form-data" value="XDDD">
+    <div class="row justify-content-center mb-3">
+      <button type="submit" class="btn btn-secondary text-white" value="1" name="default">
+        Restore default settings
+      </button>
+    </div>
+  </form>
+
+  <form name="deletedb" action="/options" method="POST" enctype="multipart/form-data" value="XDDD">
+    <div class="row justify-content-center">
+      <button type="submit" class="btn btn-warning text-black" value="1" name="deletedb">
+        Reset database
+      </button>
+    </div>
+  </form>
+
+</div>
+
+
 {% endblock %}

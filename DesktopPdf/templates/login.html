@@ -1,20 +1,38 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
-{%block title%}Pass!{%endblock%}
+{% block title %}Log in{% endblock %}
+{% block main %}
 
-{%block main_content%}
-<body style="background-color:#D0EDF7;">
-	<h1>Login</h1>
-    <form action="" method="post" class="form form-horizontal" name="passform">
-        {{ wtf.form_errors(form,"only") }}
-        {{ form.hidden_tag() }}
-        {{ wtf.form_field(form.password) }}<br>
-        <div class="form-actions">
-            <button name="action_save" type="submit" class="btn btn-primary">Log in</button>
-        </div>
-        <p>{{ wrong_password_message }}</p>
-    </form>
 
-	
-{%endblock%}
+<div class="text-center">
+
+  <p class="lead">
+    Log in:
+  </p>
+
+  <form action="/login" method="POST" enctype="multipart/form-data">
+
+    <div class="mb-4">
+      <label for="password">Password</label>
+      <input class="form-control" type="text" name="password" id="passwordbox">
+    </div>
+
+    <div class="form-actions">
+      <button name="action_save" type="submit" class="btn btn-primary">
+        Log in
+      </button>
+    </div>
+
+  </form>
+
+  {% if wrong_password %}
+    <p style="margin-bottom:0.5cm;"></p>
+    <div class="alert alert-danger" role="alert">
+      Wrong password!
+    </div>
+  {% else %}
+  {% endif %}
+
+</div>
+
+{% endblock %}

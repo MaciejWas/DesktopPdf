@@ -1,0 +1,7 @@
+dateformat: '%d-%m-%Y godzina %H'
+filename: PDF_<date>.pdf
+grayscale: true
+password: '770924'
+remember: true
+rotate: true
+sharpen: false

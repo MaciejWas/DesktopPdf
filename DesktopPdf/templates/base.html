@@ -27,6 +27,17 @@
           font-size: 3.5rem;
         }
       }
+
+      .passwordInput{
+            margin-top: 5%;
+            text-align :center;
+        }
+
+        .displayBadge{
+            margin-top: 5%;
+            display: none;
+            text-align :center;
+        }
     </style>
 
 
@@ -35,28 +46,24 @@
   </head>
 
 
-  <body class="d-flex h-100 text-center bg-dark text-white">
+  <body class="d-flex h-100 bg-dark text-white">
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
-      <header class="mb-auto">
+      <header class="mb-3">
         <div>
           <h3 class="float-md-start mb-0">DesktopPdf</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link active" aria-current="page" href="/index">Gallery</a>
-            <a class="nav-link" href="/upload">Upload</a>
-            <a class="nav-link" href="/options">Options</a>
+            <a class="nav-link {{ 'active' if focus == 'gallery' else '' }}" aria-current="page" href="/gallery">Gallery</a>
+            <a class="nav-link {{ 'active' if focus == 'upload' else '' }}" aria-current="page" href="/upload">Upload</a>
+            <a class="nav-link {{ 'active' if focus == 'options' else '' }}" aria-current="page" href="/options">Options</a>
           </nav>
         </div>
       </header>
+      <p style="margin-bottom:2cm;"></p>
 
       {% block main %}{% endblock %}
-
-      <footer class="mt-auto text-white-20">
-        <p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>
-      </footer>
     </div>
-
 
   </body>
 </html>

@@ -4,10 +4,6 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms.validators import Required
 
 
-class NewPassForm(FlaskForm):
-    password = TextField(u"New password", validators=[Required()])
-
-
 class LogInForm(FlaskForm):
     password = TextField(u"Password", validators=[Required()])
 
