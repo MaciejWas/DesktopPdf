@@ -139,7 +139,7 @@ def login_site():
 @login_required
 def upload_image():
     form = PhotoForm()
-    uploaded = False
+    uploaded_merged = False
     upload_success = True
 
     if request.method == "POST":
@@ -149,13 +149,10 @@ def upload_image():
             print("Adding temporary pdf.")
             upload_success = app.file_manager.new_temporary_pdf(photo_data)
 
-        if request.form.get("merge") == "1":
+        else: # request.form.get("merge") == "1":
             print("Merging uploaded pdfs.")
             description = request.form.get("description")
-            upload_success = app.file_manager.merge_temporary_pdfs(description)
-
-            if upload_success:
-                uploaded = True
+            uploaded_merged = app.file_manager.merge_temporary_pdfs(description)
 
     temporary_files = [
         f for f in os.listdir(app.file_manager.save_folder)\

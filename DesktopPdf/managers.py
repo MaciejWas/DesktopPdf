@@ -145,7 +145,11 @@ class FileManager:
 
     def get_default_filename(self) -> str:
         print("getting default filename:", self._default_filename)
-        return self._default_filename.replace(self._date_format, "<date>")
+
+        if self._date_format:
+            return self._default_filename.replace(self._date_format, "<date>")
+        else:
+            return self.default_filename
 
     def get_filename(self) -> str:
         current_date = datetime.now()
@@ -198,7 +202,7 @@ class FileManager:
     @staticmethod
     def sharpen_image(img: Image.Image) -> Image.Image:
         enhancer = ImageEnhance.Sharpness(img)
-        enhanced = enhancer.enhance(1.2)
+        enhanced = enhancer.enhance(2)
         return enhanced
 
     @staticmethod
