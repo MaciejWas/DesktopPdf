@@ -72,22 +72,21 @@ class PassManager:
         self.set_password(new_password)
 
     def set_password(self, new_password: str) -> None:
-        print("Setting new password")
+        print("Setting new password.")
 
         if new_password == "<random>":
-            print("New pass is supposed to be random")
+            print("New pass is supposed to be random.")
             self.new_random_password()
 
         elif new_password == self._current_password:
-            print("New is the same")
+            print("New password is the same as old.")
             pass
 
         else:
             print("Ultimately setting password to:", new_password)
+
             self._ips_with_access = [self.local_ip]
             self._current_password = new_password
-
-        print("End")
 
     def validate_password(self, password: str) -> bool:
         return password == self._current_password

@@ -31,6 +31,7 @@ def find_deduplicated_files():
 
 def login_required(f):
     @wraps(f)
+
     def decorated_function(*args, **kwargs):
         request_ip_address = request.remote_addr
         logged_in = app.pass_manager.has_access(request_ip_address)
@@ -43,7 +44,6 @@ def login_required(f):
             return f(*args, **kwargs)
 
     return decorated_function
-
 
 @app.route("/")
 def should_be_gallery():
