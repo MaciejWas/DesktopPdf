@@ -165,7 +165,7 @@ def upload_image():
         focus="upload",
         temporary_files=temporary_files,
         no_temp = len(temporary_files) == 0,
-        uploaded=uploaded,
+        uploaded_merged=uploaded_merged,
         upload_success=upload_success,
     )
 
