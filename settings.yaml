@@ -1,7 +1,7 @@
-dateformat: '%d-%m-%Y godzina %H'
-filename: PDF_<date>.pdf
+dateformat: (%d.%m godz %H)
+filename: PDF <date>.pdf
 grayscale: true
-password: '770924'
+password: '795780'
 remember: true
 rotate: true
 sharpen: false

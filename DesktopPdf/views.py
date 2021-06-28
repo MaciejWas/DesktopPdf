@@ -32,10 +32,13 @@ def find_deduplicated_files():
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        logged_in = app.pass_manager.validate_ip(request.remote_addr)
+        request_ip_address = request.remote_addr
+        logged_in = app.pass_manager.has_access(request_ip_address)
+
         if not logged_in:
             app.logger.info("Failed log in attempt from", request.remote_addr)
             return redirect("/login")
+
         else:
             return f(*args, **kwargs)
 
@@ -66,19 +69,29 @@ def gallery():
 def options():
     if request.method == "POST":
         if request.form.get("default") == "1":
+            print("Returning to default settings.")
             app.settings_manager.restore_default()
 
         elif request.form.get("deletedb") == "1":
+            print("Purging database!")
             app.file_manager.purge_database()
 
         else:
-            app.pass_manager.update(form=request.form)
-            app.file_manager.update(form=request.form)
-            app.settings_manager.update(form=request.form)
+            print("Updating password manager.")
+            app.pass_manager.update(settings=request.form)
+
+            print("Updating file manager.")
+            app.file_manager.update(settings=request.form)
+
+            print("Updating setings_manager.")
+            app.settings_manager.update(settings=request.form)
 
         if app.settings_manager.remember:
-            print("Saving settings")
+            print("Saving settings.")
             app.settings_manager.save_settings()
+
+
+    print("FINISHED OPTIONS. password:", app.pass_manager._current_password)
 
 
 
@@ -127,17 +140,22 @@ def login_site():
 def upload_image():
     form = PhotoForm()
     uploaded = False
+    upload_success = True
+
     if request.method == "POST":
         photo_data = form.photo.data
+
         if photo_data is not None:
-            app.file_manager.new_temporary_pdf(photo_data)
+            print("Adding temporary pdf.")
+            upload_success = app.file_manager.new_temporary_pdf(photo_data)
 
         if request.form.get("merge") == "1":
-            print(request.form)
+            print("Merging uploaded pdfs.")
             description = request.form.get("description")
-            print("Description:", description)
-            app.file_manager.merge_temporary_pdfs(description)
-            uploaded = True
+            upload_success = app.file_manager.merge_temporary_pdfs(description)
+
+            if upload_success:
+                uploaded = True
 
     temporary_files = [
         f for f in os.listdir(app.file_manager.save_folder)\
@@ -150,23 +168,9 @@ def upload_image():
         focus="upload",
         temporary_files=temporary_files,
         no_temp = len(temporary_files) == 0,
-        uploaded=uploaded
+        uploaded=uploaded,
+        upload_success=upload_success,
     )
-
-
-# @app.route("/downloads/", methods=["GET"])
-# @login_required
-# def files():
-    # download_folder = app.file_manager.save_folder
-    # downloaded_files = os.listdir(download_folder)
-    # files = []
-    # for file in downloaded_files:
-    #     with open(os.path.join(download_folder, file), "rb") as f:
-    #         files.append(
-    #             {"name": file, "b64": base64.b64encode(f.read()).decode("ascii")}
-    #         )
-
-    # return render_template("downloads.html") #, files=files)
 
 @app.route("/shutdown", methods=["GET"])
 @login_required

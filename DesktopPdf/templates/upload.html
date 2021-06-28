@@ -12,6 +12,13 @@
   {% else %}
   {% endif %}
 
+  {% if upload_success %}
+  {% else %}
+    <div class="alert alert-danger" role="alert">
+      Failed to process data. Are you trying to upload .png files instead of .jpg?
+    </div>
+  {% endif %}
+
   <p class="lead">
     Create new pdf:
   </p>
@@ -35,7 +42,6 @@
         </form>
       </div>
     </div>
-  </div>
 
   <p style="margin-bottom:0.5cm;"></p>
 
@@ -75,6 +81,7 @@
       </form>
     </div>
   </div>
+</div>
 
 
 </div>

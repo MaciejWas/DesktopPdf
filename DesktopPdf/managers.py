@@ -1,6 +1,5 @@
 import os
-from PIL import Image
-from PIL import ImageEnhance
+from PIL import Image, ImageEnhance, UnidentifiedImageError
 from datetime import datetime
 import random
 import yaml
@@ -8,7 +7,6 @@ from sqlitedict import SqliteDict
 import zlib
 import base64
 from PyPDF2 import PdfFileMerger
-
 
 from DesktopPdf.configuration import get_local_ip
 
@@ -21,8 +19,28 @@ def get_random_digits(n=6):
     password = "0" * (n-len(password)) + password
     return password
 
+def is_turned_on(checkbox_form_value: str):
+    if checkbox_form_value in ["on", True]:
+        return True
+    else:
+        return False
+
+
+class Counter():
+    def __init__(self):
+        self.value = 0
+
+    def next(self):
+        self.value += 1
+        return self.value
+
+    def zero(self):
+        self.value = 0
+
 
 class PassManager:
+    """Manages the current password, along with the IP whitelist"""
+
     def __init__(self):
         self._current_password = get_random_digits(n=6)
         self.local_ip = get_local_ip()
@@ -30,9 +48,11 @@ class PassManager:
 
     # Settings
 
-    def update(self, form: "multidict.MultiDict") -> None:
+    def update(self, settings: "multidict.MultiDict") -> None:
+        """Updates the current settings"""
+
         self.set_password(
-            form.get("password")
+            settings.get("password")
         )
 
     def export_settings(self) -> dict:
@@ -47,21 +67,27 @@ class PassManager:
         return self._current_password
 
     def new_random_password(self):
-        new_pass = get_random_digits(n=6)
-        self.set_password(new_pass)
+        new_password = get_random_digits(n=6)
+        print("New random password:", new_password)
+        self.set_password(new_password)
 
     def set_password(self, new_password: str) -> None:
-        print("password -> ", new_password)
+        print("Setting new password")
 
         if new_password == "<random>":
+            print("New pass is supposed to be random")
             self.new_random_password()
 
-        if new_password == self._current_password:
+        elif new_password == self._current_password:
+            print("New is the same")
             pass
 
         else:
+            print("Ultimately setting password to:", new_password)
             self._ips_with_access = [self.local_ip]
             self._current_password = new_password
+
+        print("End")
 
     def validate_password(self, password: str) -> bool:
         return password == self._current_password
@@ -71,24 +97,19 @@ class PassManager:
     def register_ip(self, ip: str) -> None:
         self._ips_with_access.append(ip)
 
-    def validate_ip(self, ip: str) -> bool:
+    def purge_whitelist(self) -> None:
+        self._ips_with_access = []
+
+    def has_access(self, ip: str) -> bool:
         if ip in self._ips_with_access:
             return True
         else:
             return False
 
-class Counter():
-    def __init__(self):
-        self.value = 0
-
-    def next(self):
-        self.value += 1
-        return self.value
-
-    def zero(self):
-        self.value = 0
 
 class FileManager:
+    """Processes new images into pdf files and keeps track of all uploaded files"""
+
     def __init__(self):
         self.save_folder = "pdfs"
         self._date_format = r"%H:%M:%S_%d-%m-%Y"
@@ -107,39 +128,57 @@ class FileManager:
 
     # Date
 
-    def get_date_format(self):
+    def get_date_format(self) -> str:
         return self._date_format
 
-    def set_date_format(self, new_date_format: str):
+    def set_date_format(self, new_date_format: str) -> None:
         old_date_format = self._date_format
         self._date_format = new_date_format
 
         self._default_filename = self._default_filename.replace(old_date_format, new_date_format)
 
-    def set_default_filename(self, new_filename: str):
+    def set_default_filename(self, new_filename: str) -> None:
         print(f"Received new default filename: {new_filename}")
 
         self._default_filename = new_filename.replace("<date>", self._date_format)
 
         print(f"Now filename is {self._default_filename}")
 
-    def get_default_filename(self):
+    def get_default_filename(self) -> str:
         print("getting default filename:", self._default_filename)
         return self._default_filename.replace(self._date_format, "<date>")
 
+    def get_filename(self) -> str:
+        current_date = datetime.now()
+        base_filename = current_date.strftime(self._default_filename)
+        pdfs = os.listdir(self.save_folder)
+
+        if base_filename in pdfs:
+            base_filename_no_ext = base_filename.replace(".pdf", "")
+            count = len(
+                [f for f in pdfs if f.startswith(base_filename_no_ext)]
+            )
+
+            filename = base_filename.replace(".pdf", f" ({count - 1}).pdf")
+
+        else:
+            filename = base_filename
+
+        return filename
+
     # Settings
 
-    def update(self, form: "multidict.MultiDict") -> None:
+    def update(self, settings: "multidict.MultiDict") -> None:
         self.set_default_filename(
-            form.get("filename")
+            settings.get("filename")
         )
         self.set_date_format(
-            form.get("dateformat")
+            settings.get("dateformat")
         )
 
-        self.rotate = True if form.get("rotate")in ["on", True] else False
-        self.sharpen = True if form.get("sharpen")in ["on", True] else False
-        self.grayscale = True if form.get("grayscale")in ["on", True] else False
+        self.rotate = is_turned_on(settings.get("rotate"))
+        self.sharpen = is_turned_on(settings.get("sharpen"))
+        self.grayscale = is_turned_on(settings.get("grayscale"))
 
     def export_settings(self) -> dict:
         settings = {
@@ -159,7 +198,8 @@ class FileManager:
 
     @staticmethod
     def sharpen_image(img: Image.Image) -> Image.Image:
-        enhanced = ImageEnhance.Sharpness(img).enhance(2)
+        enhancer = ImageEnhance.Sharpness(img)
+        enhanced = enhancer.enhance(1.2)
         return enhanced
 
     @staticmethod
@@ -167,6 +207,7 @@ class FileManager:
         return img.convert("L")
 
     def process(self, img: Image.Image) -> Image.Image:
+        """Applies rotation, grayscale and sharpening, according to settings"""
 
         if self.rotate and (img.size[0] > img.size[1]):
             img = self.rotate_image(img)
@@ -180,30 +221,28 @@ class FileManager:
         return img
 
     @staticmethod
-    def get_file_hash(filepath):
-        with open(filepath, "rb") as f:
+    def get_file_hash(path_to_file: str) -> int:
+        """Returns the hash of the file at `path_to_file`"""
+
+        with open(path_to_file, "rb") as f:
             content = f.read()
             encoded_content = base64.b64encode(content)
             pdf_hash = zlib.adler32(encoded_content)
+
         return pdf_hash
 
-    def get_filename_and_save_path(self):
-        filename = datetime.now().strftime(self._default_filename)
-        if filename in os.listdir(self.save_folder):
-            i = 0
-            for f in os.listdir(self.save_folder):
-                if f.startswith(filename.replace(".pdf", "")):
-                    i += 1
-
-            filename = filename.replace(".pdf", f" ({i}).pdf")
-
+    def get_save_path(self, filename: str) -> str:
         save_path = os.path.join(self.save_folder, filename)
+        return save_path
 
-        return filename, save_path
+    def _merge_and_save(
+        self,
+        pdfs: list[str],
+        save_path: str
+    ) -> None:
 
-
-    def _merge_and_save(self, pdfs: list[str], save_path: str) -> None:
         merger = PdfFileMerger()
+
         for file in pdfs:
             merger.append(file)
 
@@ -211,12 +250,12 @@ class FileManager:
         merger.close()
 
     def find_temporary_pdfs(self) -> list[str]:
-        temp_pdfs = [
+        temporary_pdfs = [
             os.path.join(self.save_folder, f)\
-            for f in os.listdir(self.save_folder) \
+            for f in os.listdir(self.save_folder)\
             if ("temporary" in f) and (f.endswith(".pdf"))
         ]
-        return temp_pdfs
+        return temporary_pdfs
 
     def save_to_database(self,
         pdf_hash: int,
@@ -225,16 +264,14 @@ class FileManager:
     ) -> None:
 
         if str(pdf_hash) in self.database.keys():
-            print("Saw this one before")
             # If hash is in database then add the old data to description
 
             old_data = self.database[pdf_hash]
-            print(old_data)
 
             old_title = old_data["title"]
             old_date = old_data["date_created"]
 
-            old_info = f" (duplicate of {old_title} submitted at {old_date})"
+            old_info = f" (duplicate of '{old_title}' submitted at {old_date})"
 
             self.database[pdf_hash] = {
                 "title": filename,
@@ -248,6 +285,7 @@ class FileManager:
 
             try:
                 os.remove(old_file_loc)
+
             except FileNotFoundError:
                 pass
 
@@ -258,17 +296,21 @@ class FileManager:
                 "date_created": datetime.now()
             }
 
-    def new_temporary_pdf(self,
+    def new_temporary_pdf(
+        self,
         file: "werkzeug.datastructures.FileStorage",
     ) -> bool:
 
-        pil_image = Image.open(file)
+        try:
+            pil_image = Image.open(file)
+        except UnidentifiedImageError:
+            return False
 
         if pil_image.mode == "RGBA":
-            raise RuntimeError(
-                "Image mode is RGBA, it should be RGB. "
-                "Are you uploading a .png file?"
-                )
+            # raise RuntimeError(
+            #     "Image mode is RGBA, it should be RGB. "
+            #     "Are you trying to upload a .png file?"
+            #     )
             return False
 
         pil_image = self.process(pil_image)
@@ -282,17 +324,20 @@ class FileManager:
     def merge_temporary_pdfs(self,
         description: str="No description",
     ) -> None:
+        """
+        Merges all temporary pdfs at `self.save_folder`, deletes them, and
+        saves the merged pdf
+        """
 
-        temp_pdfs = self.find_temporary_pdfs()
+        temporary_pdfs = self.find_temporary_pdfs()
 
-        print("Merging", temp_pdfs)
+        filename = self.get_filename()
+        save_path = self.get_save_path(filename)
 
-        filename, save_path = self.get_filename_and_save_path()
-
-        self._merge_and_save(temp_pdfs, save_path)
+        self._merge_and_save(temporary_pdfs, save_path)
 
         self.temporary_counter.zero()
-        for temp_pdf in temp_pdfs:
+        for temp_pdf in temporary_pdfs:
             os.remove(temp_pdf)
 
         pdf_hash = self.get_file_hash(save_path)
@@ -302,11 +347,6 @@ class FileManager:
             filename=filename,
             description=description
         )
-
-    def load_rotate_save(self, location: str):
-        pil_image = Image.open(location)
-        rotated = self.rotate_image(location)
-        return rotated
 
     def search_for_pdf(self, filepath: str):
         with open(filepath, "rb") as f:
@@ -358,8 +398,8 @@ class SettingsManager:
         if "settings.yaml" in os.listdir():
             os.remove("settings.yaml")
 
-    def update(self, form: "multidict.MultiDict") -> None:
-        self.remember = True if form.get("remember") in ["on", True] else False
+    def update(self, settings: "multidict.MultiDict") -> None:
+        self.remember = is_turned_on(settings.get("remember"))
         if not self.remember:
             self.purge_settings()
 
