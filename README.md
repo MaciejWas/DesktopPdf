@@ -9,7 +9,6 @@ Aside from python packages listed in `requirements.txt` the app also requires **
 
 ```angular2html
     $ pip install -r requirements.txt
-    $ python setup.py install
     $ python run.py
 ```
 
