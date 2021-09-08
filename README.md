@@ -2,6 +2,13 @@
 
 Application for uploading photos from a mobile device and converting it to a pdf file.
 
+## How it looks like
+
+![main_window](./figures/main_window.png)
+![upload_window](./figures/upload_window.png)
+![options_window](./figures/options_window.png)
+
+
 ## Requirements
 Aside from python packages listed in `requirements.txt` the app also requires **Google Chrome**.
 
