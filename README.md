@@ -15,6 +15,8 @@ Aside from python packages listed in `requirements.txt` the app also requires **
 ## How to run
 
 ```angular2html
+    $ git clone https://github.com/MaciejWas/DesktopPdf.git
+    $ cd DesktopPdf
     $ pip install -r requirements.txt
     $ python run.py
 ```
